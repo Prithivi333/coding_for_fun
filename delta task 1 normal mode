@@ -113,7 +113,7 @@
         arr.sort(function(a,b){return a-b});
         console.log(true);
         console.log(arr);
-        document.getElementById('best').innerHTML='<ol type="i"S>'
+        document.getElementById('best').innerHTML='<ol type="i">'
         arr.forEach(element => {
             if(element!=0)
                 document.getElementById('best').innerHTML+="<li>"+Math.trunc((element)/60)+":"+(element)%60+"</li>";
@@ -196,7 +196,7 @@
         let min=document.getElementById('minute').innerHTML;
           let sec=document.getElementById('second').innerHTML;
           document.getElementById('conc').innerHTML+='Your time is:'+min+':'+sec;
-          let curr_time=(min*60)+sec;
+          let curr_time=(Number(min*60)+Number(sec));
         if(window.localStorage.getItem('best')){
           let ar=JSON.parse(window.localStorage.getItem('best'));
               ar.push(curr_time);
