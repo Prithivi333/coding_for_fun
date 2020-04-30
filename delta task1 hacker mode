@@ -1,0 +1,450 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        
+	*{margin: auto;
+          box-sizing:border-box;
+          padding:00px;
+          }
+          body{
+              background-color: rgb(5, 31, 28);
+          }
+        #board{
+            display:none;
+            width:500px;
+            height:400px;
+            position: static;
+            margin:auto;
+        }
+        button{
+           border-radius: 5px;
+          background: #ffa600;
+          color: #fff;
+          border: solid 1px #fff;
+          text-decoration: none;
+          cursor: pointer;
+          font-size: 1.2em;
+          padding: 18px 10px;
+          width: 180px;
+          margin: auto;
+          outline: none;
+          position: relative;
+          display: block;
+
+        }
+        button:hover {
+            transition: all 0.5s ease-in-out;
+            background: #fff;
+            border: solid 1px #fff;
+            color: #ffa600;
+        }
+        #restart{
+            display: none;
+        }
+        #start{
+            display: none;
+        }
+        .squares1,.squares2{
+            text-align: center;
+            border-style: inset;
+            border-color: rgb(255, 0, 0);
+            float: left;
+            height: 100px;
+            width: 100px;
+            font-size: 50px;
+            background-color: rgb(61, 7, 7);
+            color: rgb(250, 249, 249);
+            cursor: pointer;
+            display: block;
+        }
+        #timing{
+            display: none;
+            text-align: center;
+            color:green;
+            font-size: 50px;
+            margin: auto;
+
+        }
+        
+        #best{
+            background-color: rgb(238, 18, 11);
+            width: auto;
+            height: auto;
+            text-align: center;
+            color: black;
+            font-size: 50px ;
+            margin: auto;
+            display: none;
+        }
+        #text{
+            background-color: rgb(5, 31, 28);
+            height: fit-content;
+            width: 100%;
+            text-align: center;
+            font-size: 35px;
+            font-family: sans-serif;
+            color: darkblue;
+            margin: auto;
+            display: none;
+        }
+        #minute,#second{
+            display: inline;
+        }
+        #conc{
+            color: white;
+            display: inline-block;
+            background-color: rgba(255, 102, 0, 0.986);
+            text-align: center;
+            font-size: 40px;
+        }
+        #diff{
+            height: auto;
+            width: auto;
+            background-color: blue;
+            text-align: center;
+            display: block;
+        }
+        @media only screen and (max-width: 500px){
+            #board{
+                width: 100%;
+                height: 100%;
+            }
+            .squares1,.squares2{
+                width: 20%;
+                height: 20%;
+            }
+        }   
+    </style>
+</head>
+
+<body>
+    <form id="diff">
+        <p>Choose mode:</p>
+        <input type="radio" id="mode" name="mode" value="easy" checked>
+        <label for="easy">Easy</label><br>
+        <input type="radio" id="mode" name="mode" value="medium">
+        <label for="medium">Medium</label><br>
+        <input type="radio" id="mode" name="mode" value="hard">
+        <label for="hard">Hard</label><br>
+    </form>
+    <button id='play' onclick="fun()">Play</button>
+    <button onclick='starttimer()' id='start'>Start new game</button>
+    <button onclick="window.location.reload()" id='restart'>Restart</button>
+    <div id='timing'>
+        <span id='minute'>00</span>:<span id='second'>00</span>
+    </div>
+    <div id='best'>BEST SCORE:</div>
+    <span id="text">Click the numbers on the ascending order and try to beat the above best time(s)!</span>
+    <div id='board'></div>
+    <div id='conc'></div>
+    <audio id="click" src="http://soundbible.com/grab.php?id=1705&type=wav"></audio>
+    <audio id="wrong" src="http://soundbible.com/grab.php?id=1251&type=mp3"></audio>
+<script>
+    document.getElementById('start').style.visibility='visible';
+     var mode;
+     var armode;
+     var ab=0;
+     var timer;
+     var time=1;
+     var col_Int=91;
+     var snd=document.getElementById('click');
+     var wrng=document.getElementById('wrong');
+    function fun(){
+        armode=document.getElementsByName('mode');
+          armode.forEach(element => {
+            if(element.checked){
+                mode=element.value;
+            }
+        });
+        console.log(mode);
+        if(mode=="easy"){
+         ab=1;
+     for(i=0;i<20;i++){
+        squares1.push(new square(i+1,col_Int));
+        col_Int+=4;
+     }
+     for(j=20;j<40;j++){
+         squares2.push(new square(j+1,col_Int));
+         col_Int+=4;
+     }
+     shuffle(squares1);
+     shuffle(squares2);
+     for(let k=0;k<20;k++){
+        document.getElementById('board').innerHTML+='<div class="squares1" style="background-color:rgb('+squares1[k].Int+',0,0)" id="'+squares1[k].value+'" value="'+squares1[k].value+
+        '" onclick="userclick(this,'+squares1[k].value+')">'+squares1[k].value+'</div>';
+     }
+     }
+     if(mode=="hard"){
+         ab=3;
+         console.log('ab=3')
+         document.getElementById('board').style.height='500 px';
+         document.getElementById('board').style.width='600 px';
+        for(i=0;i<30;i++){
+        squares1.push(new square(i+1,col_Int));
+        col_Int+=2;
+     }
+     for(j=30;j<60;j++){
+         squares2.push(new square(j+1,col_Int));
+         col_Int+=2;
+     }
+     shuffle(squares1);
+     shuffle(squares2);
+     for(let k=0;k<30;k++){
+        document.getElementById('board').innerHTML+='<div class="squares1" style="background-color:rgb('+squares1[k].Int+',0,0)" id="'+squares1[k].value+'" value="'+squares1[k].value+
+        '" onclick="userclick(this,'+squares1[k].value+')">'+squares1[k].value+'</div>';
+     }
+     }
+     if(mode=="medium"){
+         ab=2;
+         document.getElementById('board').style.height='500 px';
+         document.getElementById('board').style.width='500 px';
+        for(i=0;i<25;i++){
+        squares1.push(new square(i+1,col_Int));
+        col_Int+=3;
+     }
+     for(j=25;j<50;j++){
+         squares2.push(new square(j+1,col_Int));
+         col_Int+=3;
+     }
+     shuffle(squares1);
+     shuffle(squares2);
+     for(let k=0;k<25;k++){
+        document.getElementById('board').innerHTML+='<div class="squares1" style="background-color:rgb('+squares1[k].Int+',0,0)" id="'+squares1[k].value+'" value="'+squares1[k].value+
+        '" onclick="userclick(this,'+squares1[k].value+')">'+squares1[k].value+'</div>';
+     }
+     }
+     i=0;
+    document.getElementById('start').style.display='block';
+    document.getElementById('timing').style.display='block';
+    document.getElementById('best').style.display='block';
+    document.getElementById('text').style.display='block';
+    document.getElementById('diff').style.display='none';
+    document.getElementById('play').style.display='none';
+    if(ab==1){
+    if(window.localStorage.getItem('Easy')){
+         let arr=JSON.parse(window.localStorage.getItem('Easy'));
+         arr.sort(function(a,b){return a-b});
+         console.log(true);
+         console.log(arr);
+         document.getElementById('best').innerHTML='<ol type="i">'
+         arr.forEach(element => {
+             if(element!=0)
+                 document.getElementById('best').innerHTML+="<li>"+Math.trunc((Number(element)/60))+":"+(Number(element))%60+"</li>";
+            
+         });
+         document.getElementById('best').innerHTML+="</ol>";
+     }else{
+         console.log('false');
+         document.getElementById('best').innerHTML=00+":"+00;
+     }
+    }
+    if(ab==2){
+        if(window.localStorage.getItem('medium')){
+         let arr=JSON.parse(window.localStorage.getItem('medium'));
+         arr.sort(function(a,b){return a-b});
+         console.log(true);
+         console.log(arr);
+         document.getElementById('best').innerHTML='<ol type="i">'
+         arr.forEach(element => {
+             if(element!=0)
+                 document.getElementById('best').innerHTML+="<li>"+Math.trunc((Number(element)/60))+":"+(Number(element))%60+"</li>";
+            
+         });
+         document.getElementById('best').innerHTML+="</ol>";
+     }else{
+         console.log('false');
+         document.getElementById('best').innerHTML=00+":"+00;
+     }
+    }
+    if(ab==3){
+        if(window.localStorage.getItem('hard')){
+         let arr=JSON.parse(window.localStorage.getItem('hard'));
+         arr.sort(function(a,b){return a-b});
+         console.log(true);
+         console.log(arr);
+         document.getElementById('best').innerHTML='<ol type="i">'
+         arr.forEach(element => {
+             if(element!=0)
+                 document.getElementById('best').innerHTML+="<li>"+Math.trunc((Number(element)/60))+":"+(Number(element))%60+"</li>";
+            
+         });
+         document.getElementById('best').innerHTML+="</ol>";
+     }else{
+         console.log('false');
+         document.getElementById('best').innerHTML=00+":"+00;
+     }
+    }
+    }
+
+     console.log('asss');
+     function square(x,y){
+         this.value=x;
+         this.Int=y;
+     }
+     var squares1=[];
+     var squares2=[];
+     function shuffle(array){
+         array.sort(()=>Math.random()-0.5);
+     }
+     function count(){
+        document.getElementById('second').innerHTML=Number(document.getElementById('second').innerHTML)+1;
+        if(document.getElementById('second').innerHTML=='60'){
+            document.getElementById('second').innerHTML='0';
+            document.getElementById('minute').innerHTML=Number(document.getElementById('minute').innerHTML)+1;
+        }
+     }
+     
+     function userclick(ele,Id){ 
+         if(ab==1){  
+            if(ele.innerHTML==time){
+                clik();
+                if(ele.innerHTML==40){
+                    stoptimer();
+                    click();
+                }
+                console.log('aas');
+                if(time>20){
+                    document.getElementById(Id).innerHTML='';
+                }
+                else{
+                    console.log(squares2);
+                    console.log(i);
+                    document.getElementById(Id).innerHTML=squares2[i].value;
+                    document.getElementById(Id).style.backgroundColor='rgb('+squares2[i].Int+",0,0)";
+                }
+                time++;
+                i++;
+            }else{
+                wrog();
+                document.getElementById("board").addEventListener("click", function(event){event.preventDefault()});
+            }
+         }
+         if(ab==3){
+            if(ele.innerHTML==time){
+                clik();
+                if(ele.innerHTML==60){
+                    stoptimer();
+                    click();
+                }
+                console.log('aas');
+                if(time>30){
+                    document.getElementById(Id).innerHTML='';
+                }
+                else{
+                    document.getElementById(Id).innerHTML=squares2[i].value;
+                    document.getElementById(Id).style.backgroundColor='rgb('+squares2[i].Int+",0,0)";
+                }
+                time++;
+                i++;
+            }else{
+                wrog();
+                document.getElementById("board").addEventListener("click", function(event){event.preventDefault()});
+            }
+         }
+         if(ab==2){
+            if(ele.innerHTML==time){
+                clik();
+                if(ele.innerHTML==50){
+                    stoptimer();
+                    click();
+                }
+                console.log('aas');
+                if(time>25){
+                    document.getElementById(Id).innerHTML='';
+                }
+                else{
+                    document.getElementById(Id).innerHTML=squares2[i].value;
+                    document.getElementById(Id).style.backgroundColor='rgb('+squares2[i].Int+",0,0)";
+                    
+                }
+                time++;
+                i++;
+            }else{
+                wrog();
+                document.getElementById("board").addEventListener("click", function(event){event.preventDefault()});
+            }
+         }
+         }
+     function starttimer(){
+        document.getElementById("board").style.display="block";
+        document.getElementById('play').style.display='none';
+        document.getElementById('restart').style.display='block';
+        document.getElementById('start').style.display='none';
+        document.getElementById('minute').innerHTML='00';
+        document.getElementById('second').innerHTML='00';
+        timer=setInterval(count,1000);
+     }
+     function stoptimer(){
+        clearInterval(timer);
+     }
+     function click(){
+        let min=document.getElementById('minute').innerHTML;
+          let sec=document.getElementById('second').innerHTML;
+          document.getElementById('conc').innerHTML+='Your time is:'+min+':'+sec;
+          let curr_time=Number((min*60))+Number(sec);
+          if(ab==1){
+        if(window.localStorage.getItem('Easy')){
+          let ar=JSON.parse(window.localStorage.getItem('Easy'));
+              ar.push(curr_time);
+              console.log(ar);
+              ar.sort(function(a,b){return a-b});
+              console.log(ar);
+              if(ar.length<=5){
+              window.localStorage.setItem('Easy',JSON.stringify(ar));
+              }else{
+              window.localStorage.setItem('Easy',JSON.stringify(ar.slice(0,5)));
+              }
+
+        }else{
+          let arr=[curr_time];
+          window.localStorage.setItem('Easy',JSON.stringify(arr));
+        }
+    }
+    if(ab==2){
+        if(window.localStorage.getItem('medium')){
+          let ar=JSON.parse(window.localStorage.getItem('medium'));
+              ar.push(curr_time);
+              console.log(ar);
+              ar.sort(function(a,b){return a-b});
+              console.log(ar);
+              if(ar.length<=5){
+              window.localStorage.setItem('medium',JSON.stringify(ar));
+              }else{
+              window.localStorage.setItem('medium',JSON.stringify(ar.slice(0,5)));
+              }
+
+        }else{
+          let arr=[curr_time];
+          window.localStorage.setItem('medium',JSON.stringify(arr));
+        }
+    }
+    if(ab==3){
+        if(window.localStorage.getItem('hard')){
+          let ar=JSON.parse(window.localStorage.getItem('hard'));
+              ar.push(curr_time);
+              console.log(ar);
+              ar.sort(function(a,b){return a-b});
+              console.log(ar);
+              if(ar.length<=5){
+              window.localStorage.setItem('hard',JSON.stringify(ar));
+              }else{
+              window.localStorage.setItem('hard',JSON.stringify(ar.slice(0,5)));
+              }
+
+        }else{
+          let arr=[curr_time];
+          window.localStorage.setItem('hard',JSON.stringify(arr));
+        }
+    }
+     }
+     function clik(){
+         snd.play();}  
+         function wrog(){
+             wrng.play();
+         }   
+     
+    
+</script>
+</body>
+</html>
